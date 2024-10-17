@@ -4,6 +4,7 @@ using Sirenix.OdinInspector;
 using TurnBasedPractice.Character;
 using TurnBasedPractice.Character.Controller;
 using TurnBasedPractice.InfoSystem;
+using TurnBasedPractice.Localization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,8 @@ namespace TurnBasedPractice.BattleCore.Selection
 {
     public abstract class NonMonoButtonAction : ICustomAction, IFocusable
     {
+        protected static string escapeFailedTemplate;
+
         [ShowInInspector]
         public virtual Hero   User{ get; set; }
         [ShowInInspector]

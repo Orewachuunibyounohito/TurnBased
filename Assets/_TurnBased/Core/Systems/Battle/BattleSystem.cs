@@ -49,22 +49,11 @@ namespace TurnBasedPractice.BattleCore
         private const BattleStateType START_STATE   = BattleStateType.Start;
 
         #region Unity Events
-        private void Awake(){
-            var initializeAsync = LocalizationSettings.SelectedLocaleAsync;
-            if(initializeAsync.IsDone){
-                SelectedLocaleAsyncCompleted(initializeAsync);
-            }
-            else{
-                initializeAsync.Completed += SelectedLocaleAsyncCompleted;
-            }
-        }
-
-        private void SelectedLocaleAsyncCompleted(AsyncOperationHandle<Locale> async){
-            BattleInitializer.BattleInitialize(this);
-            EnterBattle();
-        }
-
         private void Start(){
+            if(StateMachine == null){
+                Destroy(gameObject);
+                return ;
+            }
             StateMachine.Initialize(BattleStates[START_STATE]);
         }
 

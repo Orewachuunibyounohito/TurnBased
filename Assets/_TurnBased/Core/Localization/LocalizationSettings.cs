@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TurnBasedPractice.BattleCore.Selection;
 using TurnBasedPractice.Effects;
 using TurnBasedPractice.Items;
+using TurnBasedPractice.MainMenu.Views;
 using TurnBasedPractice.SkillSystem;
 using UnityEngine.Localization;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -45,6 +46,8 @@ namespace TurnBasedPractice.Localization
             AddDigitEntryIntoDictionary();
             AddBasedDigitEntryIntoDictionary();
             AddNestedDigitEntryIntoDictionary();
+            
+            Helper.Initialize();
         }
 
         private static void AddSelectionEntryIntoDictionary()

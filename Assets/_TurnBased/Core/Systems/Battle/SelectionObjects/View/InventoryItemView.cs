@@ -14,6 +14,7 @@ public class InventoryItemView : MonoBehaviour
     public TMPro.TextMeshProUGUI AmountText{ get; private set; }
 
     public InventoryItemView Init(Inventory.Slot slot){
+        slot.item.RegisterStringChanged();
         Icon.sprite = slot.item.Icon;
         DescriptionText.SetText( slot.item.Name );
         AmountText.SetText( $"x{slot.amount}" );

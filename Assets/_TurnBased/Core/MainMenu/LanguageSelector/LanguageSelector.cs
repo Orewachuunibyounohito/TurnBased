@@ -23,6 +23,7 @@ namespace TurnBasedPractice.MainMenu
         }
         private void Start(){
             Confirm.onClick.AddListener(ChangeLanguage);
+            Confirm.onClick.AddListener(OnMenuClosed);
             OutOfPanel.onClick.AddListener(OnMenuClosed);
         }
 

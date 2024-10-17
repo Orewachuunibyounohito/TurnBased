@@ -188,7 +188,8 @@ namespace TurnBasedPractice.BattleCore
                 currentHeight = battleSystem.BattleUI.InventoryContent.rect.height + cellHeight;
                 battleSystem.BattleUI.InventoryContent.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, currentHeight);
                 var itemAction = Object.Instantiate(battleSystem.BattleUI.ItemActionPrefab, battleSystem.BattleUI.InventoryContent);
-                var itemView = itemAction.AddComponent<InventoryItemView>().Init(slot);
+                var itemView = itemAction.AddComponent<InventoryItemView>();
+                itemView.Init(slot);
 
                 var inventoryItemAction =
                     SelectionFactory.GenerateInventoryItemSelection(

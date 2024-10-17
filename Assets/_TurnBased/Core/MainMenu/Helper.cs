@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TurnBasedPractice.Localization;
 using UnityEngine.Localization;
 
 namespace TurnBasedPractice.MainMenu.Views
 {
-    public class Helper
+    public static class Helper
     {
         private static List<string> nestedDigitNames = new(){
             "", "十", "百", "千"
@@ -13,6 +14,32 @@ namespace TurnBasedPractice.MainMenu.Views
         private static List<string> basedDigitNames = new(){
             "", "萬", "億", "兆", "京", "垓", "秭", "穰", "溝", "澗", "正", "載"
         };
+        private static Dictionary<LocalizedString, string> translatedStrings = new();
+
+        public static void Initialize(){
+            foreach (var digitName in Enum.GetValues(typeof(DigitName)).Cast<DigitName>()){
+                var localizedString = LocalizationSettings.GetDigitString(digitName);
+                if(translatedStrings.TryAdd(localizedString, "")){
+                    localizedString.StringChanged += UpdateTranslatedString(localizedString);
+                }
+            }
+            foreach (var basedDigitName in Enum.GetValues(typeof(BasedDigitName)).Cast<BasedDigitName>()){
+                var localizedString = LocalizationSettings.GetBasedDigitString(basedDigitName);
+                if(translatedStrings.TryAdd(localizedString, "")){
+                    localizedString.StringChanged += UpdateTranslatedString(localizedString);
+                }
+            }
+            foreach (var nestedDigitName in Enum.GetValues(typeof(NestedDigitName)).Cast<NestedDigitName>()){
+                var localizedString = LocalizationSettings.GetNestedDigitString(nestedDigitName);
+                if(translatedStrings.TryAdd(localizedString, "")){
+                    localizedString.StringChanged += UpdateTranslatedString(localizedString);
+                }
+            }
+        }
+
+        private static LocalizedString.ChangeHandler UpdateTranslatedString(LocalizedString localizedString){
+            return (translatedString) => translatedStrings[localizedString] = translatedString;
+        }
 
         public static string NumberToChinese(ulong number){
             string chinese = "";
@@ -87,7 +114,7 @@ namespace TurnBasedPractice.MainMenu.Views
             while(number != 0){
                 basedString = LocalizationSettings.GetBasedDigitString(basedDigitName);
                 currentNestedNumber = number % 10000;
-                currentString = currentNestedNumber != 0 && basedString != LocalizationSettings.NoneString? basedString.GetLocalizedString() : "";
+                currentString = currentNestedNumber != 0 && basedString != LocalizationSettings.NoneString? translatedStrings[basedString] : "";
                 currentString = NestedNumberToLocale(currentNestedNumber) + currentString;
                 localized = currentString + localized;
                 number /= 10000;
@@ -118,7 +145,7 @@ namespace TurnBasedPractice.MainMenu.Views
                 currentDigit = nestedNumber % 10;
                 prevDigit = currentDigit;
                 nestedNumber /= 10;
-                currentNestedDigitName = nestedString != LocalizationSettings.NoneString? nestedString.GetLocalizedString() : "";
+                currentNestedDigitName = nestedString != LocalizationSettings.NoneString? translatedStrings[nestedString] : "";
                 nestedDigitName++;
                 if (currentDigit == 0) { continue; }
                 hadNotZero = true;
@@ -132,14 +159,16 @@ namespace TurnBasedPractice.MainMenu.Views
         }
 
         private static bool ThousandNestedIsZero(string localized){
-            return localized.IndexOf(LocalizationSettings.GetNestedDigitString(NestedDigitName.Thousand).GetLocalizedString()) != 1;
+            var localizedNestedThousand = LocalizationSettings.GetNestedDigitString(NestedDigitName.Thousand);
+            return localized.IndexOf(translatedStrings[localizedNestedThousand]) != 1;
         }
 
         private static string DigitToLocale(ulong number){
             if(number >= 10){
                 throw new Exception("Digit error!");
             }
-            return LocalizationSettings.GetDigitString((DigitName)number).GetLocalizedString() ?? "";
+            var localizedDigit = LocalizationSettings.GetDigitString((DigitName)number);
+            return translatedStrings[localizedDigit] ?? "";
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using TurnBasedPractice.Character;
 using TurnBasedPractice.Localization;
 using UnityEngine;
+using UnityEngine.Localization;
 
 namespace TurnBasedPractice.Items
 {
@@ -14,14 +15,10 @@ namespace TurnBasedPractice.Items
         protected string _description;
         protected ItemName _type;
 
-        // protected static string itemUseTemplate => LocalizationSettings.GetCommonTemplate(CommonStringTemplate.ItemUse);
-        // protected static string takeDamageTemplate => LocalizationSettings.GetCommonTemplate(CommonStringTemplate.TakeDamage);
-        // protected static string healthRecoveryTemplate => LocalizationSettings.GetCommonTemplate(CommonStringTemplate.HealthRecovery);
-        // protected static string manaRecoveryTemplate => LocalizationSettings.GetCommonTemplate(CommonStringTemplate.ManaRecovery);
-        protected static string itemUseTemplate => LocalizationSettings.GetCommonString(CommonStringTemplate.ItemUse).GetLocalizedString();
-        protected static string takeDamageTemplate => LocalizationSettings.GetCommonString(CommonStringTemplate.TakeDamage).GetLocalizedString();
-        protected static string healthRecoveryTemplate => LocalizationSettings.GetCommonString(CommonStringTemplate.HealthRecovery).GetLocalizedString();
-        protected static string manaRecoveryTemplate => LocalizationSettings.GetCommonString(CommonStringTemplate.ManaRecovery).GetLocalizedString();
+        protected static string itemUseTemplate;
+        protected static string takeDamageTemplate;
+        protected static string healthRecoveryTemplate;
+        protected static string manaRecoveryTemplate;
         
         public long   Id          => _id;
         public string Name        => _name;
@@ -30,12 +27,18 @@ namespace TurnBasedPractice.Items
         public string Description => _description;
         public ItemName Type      => _type;
         
-        // private string localizedName => LocalizationSettings.GetItemName(_type);
-        private string localizedName => LocalizationSettings.GetItemString(_type).GetLocalizedString();
+        private string localizedName = "None";
+
+        static Item(){
+            LocalizationSettings.GetCommonString(CommonStringTemplate.ItemUse).StringChanged += UpdateItemUseTemplate;
+            LocalizationSettings.GetCommonString(CommonStringTemplate.TakeDamage).StringChanged += UpdateTakeDamageTemplate;
+            LocalizationSettings.GetCommonString(CommonStringTemplate.HealthRecovery).StringChanged += UpdateHealthRecoveryTemplate;
+            LocalizationSettings.GetCommonString(CommonStringTemplate.ManaRecovery).StringChanged += UpdateManaRecoveryTemplate;
+        }
 
         public Item(){}
 
-        public Item(long id, string name, Sprite icon = null, uint cost = 0, string description = ""){
+        public Item(long id, string name, Sprite icon = null, uint cost = 0, string description = "") : this(){
             _id          = id;
             _name        = name;
             _icon        = icon;
@@ -68,5 +71,13 @@ namespace TurnBasedPractice.Items
 
         protected virtual string UseText(Hero user, Hero target) => string.Format(itemUseTemplate, user.Name, localizedName, target.Name);
         protected virtual string AttackText(Hero target, int damage) => string.Format(takeDamageTemplate, target.Name, damage);
+
+        public void RegisterStringChanged() => LocalizationSettings.GetItemString(_type).StringChanged += UpdateLocalizedName;
+        private void UpdateLocalizedName(string value) => localizedName = value;
+
+        private static void UpdateItemUseTemplate(string value) => itemUseTemplate = value;
+        private static void UpdateTakeDamageTemplate(string value) => takeDamageTemplate = value;
+        private static void UpdateHealthRecoveryTemplate(string value) => healthRecoveryTemplate = value;
+        private static void UpdateManaRecoveryTemplate(string value) => manaRecoveryTemplate = value;        
     }
 }

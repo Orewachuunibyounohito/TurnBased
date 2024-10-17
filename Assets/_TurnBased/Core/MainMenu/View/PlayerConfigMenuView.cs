@@ -34,8 +34,7 @@ namespace TurnBasedPractice.MainMenu.Views
         public Button.ButtonClickedEvent onGameStartClick => gameStartButton.onClick;
         public Button.ButtonClickedEvent onExitClick => exitButton.onClick;
 
-        public PlayerConfigMenuView(Transform menu)
-        {
+        public PlayerConfigMenuView(Transform menu){
             this.menu = menu;
             selectorContainer = menu.Find("ConfigPanel/Selector").GetComponentInChildren<ScrollRect>().content;
             p1InfoContainer = menu.Find("ConfigPanel/PlayerInfo/P1").GetComponent<RectTransform>();
@@ -43,6 +42,10 @@ namespace TurnBasedPractice.MainMenu.Views
             gameStartButton = menu.Find("ConfigPanel/GameStartButton").GetComponent<Button>();
             exitButton = menu.Find("ConfigPanel/ExitButton").GetComponent<Button>();
             configButtons = new List<Button>();
+            Binding();
+        }
+
+        private void Binding(){
             LocalizedString localizedString = LocalizationSettings.GetCommonString(CommonStringTemplate.PlayerConfigLabel);
             localizedString.StringChanged += UpdateButtonsString;
         }
@@ -58,16 +61,7 @@ namespace TurnBasedPractice.MainMenu.Views
             Button configButton = Object.Instantiate(configButtonPrefab, selectorContainer)
                                         .GetComponent<Button>();
             configButtons.Add(configButton);
-            SetButtonText(configButton);
             return configButton;
-        }
-
-        private void SetButtonText(Button configButton){
-            var localizedString = LocalizationSettings.GetCommonString(CommonStringTemplate.PlayerConfigLabel);
-            var index = configButtons.IndexOf(configButton);
-            var localizedNumber = Helper.NumberToLocale((ulong)index+1);
-            string label = string.Format(localizedString.GetLocalizedString(), localizedNumber);
-            configButton.GetComponentInChildren<TextMeshProUGUI>().SetText(label);
         }
 
         private void UpdateButtonsString(string translatedString){

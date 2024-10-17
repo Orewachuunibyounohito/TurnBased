@@ -13,6 +13,11 @@ namespace TurnBasedPractice.BattleCore.Selection
         private Escape escape;
 
         public event Action<Hero> PlayerEscaped;
+        
+
+        static NonMonoEscapeAction(){
+            LocalizationSettings.GetCommonString(CommonStringTemplate.EscapeFailed).StringChanged += UpdateEscapeFailedTemplate;
+        }
 
         public NonMonoEscapeAction(Button button, Hero user, params Hero[] targets) : base(button, user, targets){
             escape = SkillFactory.GenerateSkill(SkillName.Escape) as Escape;
@@ -33,11 +38,12 @@ namespace TurnBasedPractice.BattleCore.Selection
             }
         }
 
-        public override void Interact(PlayerController playerController){
-        }
+        public override void Interact(PlayerController playerController){}
 
         private string EscapeFailedText() => 
-            string.Format(LocalizationSettings.GetCommonString(CommonStringTemplate.EscapeFailed).GetLocalizedString(),
+            string.Format(escapeFailedTemplate,
                           User.Name);
+        
+        private static void UpdateEscapeFailedTemplate(string value) => escapeFailedTemplate = value;
     }
 }

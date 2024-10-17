@@ -9,8 +9,16 @@ namespace TurnBasedPractice.BattleCore
 {
     public class EndState : BattleState
     {
+        private static string deathTemplate;
+        private static string escapeTemplate;
+
         private bool         isPreparing = true;
         private BattleResult battleResult;
+
+        static EndState(){
+            LocalizationSettings.GetCommonString(CommonStringTemplate.Death).StringChanged += UpdateDeathTemplate;
+            LocalizationSettings.GetCommonString(CommonStringTemplate.Escape).StringChanged += UpdateEscapeTemplate;
+        }
 
         public EndState(BattleSystem battleSystem, StateMachine stateMachine) : base(battleSystem, stateMachine){
             stateType = BattleStateType.End;
@@ -51,14 +59,10 @@ namespace TurnBasedPractice.BattleCore
         }
 
         private string LoserText(){
-            // string deathLocalizedString = LocalizationSettings.GetCommonTemplate(CommonStringTemplate.Death);
-            string deathLocalizedString = LocalizationSettings.GetCommonString(CommonStringTemplate.Death).GetLocalizedString();
-            return string.Format(deathLocalizedString, battleResult.loser.Name);
+            return string.Format(deathTemplate, battleResult.loser.Name);
         }
         private string EscapeText(){
-            // string escapeLocalizedString = LocalizationSettings.GetCommonTemplate(CommonStringTemplate.Escape);
-            string escapeLocalizedString = LocalizationSettings.GetCommonString(CommonStringTemplate.Escape).GetLocalizedString();
-            return string.Format(escapeLocalizedString, battleResult.loser.Name);
+            return string.Format(escapeTemplate, battleResult.loser.Name);
         }
 
         public override void FrameUpdate(){
@@ -83,5 +87,8 @@ namespace TurnBasedPractice.BattleCore
         public void SetBattleResult(BattleResult battleResult){
             this.battleResult = battleResult;
         }
+
+        private static void UpdateDeathTemplate(string value) => deathTemplate = value;
+        private static void UpdateEscapeTemplate(string value) => escapeTemplate = value;
     }
 }

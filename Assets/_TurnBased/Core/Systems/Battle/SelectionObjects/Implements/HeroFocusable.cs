@@ -20,7 +20,6 @@ namespace TurnBasedPractice.BattleCore.Selection
         public HeroFocusable(Hero hero)
         {
             Hero = hero;
-            // heroAnimator = Hero.GetComponent<Animator>() ?? null;
             Transform focusableObject = Hero.transform.Find("Focusable");
             focusableAnimator = focusableObject.GetComponent<Animator>() ?? null;
             Transform spriteObject = focusableObject.Find("Sprite&Mask");

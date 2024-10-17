@@ -11,12 +11,12 @@ namespace TurnBasedPractice.Effects
     [Serializable]
     public class AbstractEffect : IEffect
     {
+        protected string bestowedTemplate;
+        protected string effectTemplate;
+        protected string liftTemplate;
+
         protected int baseDuration = 5;
         protected int baseSuccessRate = 20;
-
-        protected string bestowedTemplate{ get => LocalizationSettings.GetBuffString(Name, BuffPhase.Bestowed).GetLocalizedString(); }
-        protected string effectTemplate{ get => LocalizationSettings.GetBuffString(Name, BuffPhase.Effect).GetLocalizedString(); }
-        protected string liftTemplate{ get => LocalizationSettings.GetBuffString(Name, BuffPhase.Lift).GetLocalizedString(); }
 
         [ShowInInspector, ReadOnly]
         public virtual EffectName  Name  { get; }
@@ -29,6 +29,7 @@ namespace TurnBasedPractice.Effects
 
         public AbstractEffect(){
             Duration = baseDuration;
+            RegisterStringChanged();
         }
 
         public virtual bool Bestow(Hero user, Hero target/* , Func<float> probability */){
@@ -57,5 +58,15 @@ namespace TurnBasedPractice.Effects
             string.Format(bestowedTemplate, target.Name);
         public virtual string LiftText(Hero owner) =>
             string.Format(liftTemplate, owner.Name);
+
+        protected void RegisterStringChanged(){
+            LocalizationSettings.GetBuffString(Name, BuffPhase.Bestowed).StringChanged += UpdateBestowedTemplate;
+            LocalizationSettings.GetBuffString(Name, BuffPhase.Effect).StringChanged += UpdateEffectTemplate;
+            LocalizationSettings.GetBuffString(Name, BuffPhase.Lift).StringChanged += UpdateLiftTemplate;
+        }
+
+        private void UpdateBestowedTemplate(string value) => bestowedTemplate = value;
+        private void UpdateEffectTemplate(string value) => effectTemplate = value;
+        private void UpdateLiftTemplate(string value) => liftTemplate = value;
     }
 }

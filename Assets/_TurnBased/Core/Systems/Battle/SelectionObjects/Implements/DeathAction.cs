@@ -9,6 +9,8 @@ namespace TurnBasedPractice.BattleCore.Selection
 {
     public class DeathAction : ICustomAction
     {
+        private static string defeatTemplate;
+
         private bool _isFinish = false;
 
         public Hero User { get; set; }
@@ -16,9 +18,13 @@ namespace TurnBasedPractice.BattleCore.Selection
         public float ExecuteTime { get; set; } = Time.deltaTime;
         public string ExecuteInfo { get; set; }
 
-        private string defeatTemplate => LocalizationSettings.GetCommonString(CommonStringTemplate.Defeat).GetLocalizedString();
+        // private string defeatTemplate;
 
         public bool IsFinish => _isFinish;
+
+        static DeathAction(){
+            LocalizationSettings.GetCommonString(CommonStringTemplate.Defeat).StringChanged += UpdateDefeatTemplate;
+        }
 
         public DeathAction(Hero user, string attacker){
             User = user;
@@ -44,5 +50,7 @@ namespace TurnBasedPractice.BattleCore.Selection
             Finish();
             User.PhaseOK();
         }
+
+        private static void UpdateDefeatTemplate(string value) => defeatTemplate = value;
     }
 }
